@@ -15,7 +15,15 @@ formula which I cribbed from [here](http://www.movable-type.co.uk/scripts/latlon
  * Add more GIS data
  * Add weather data
 
+#### Sample Tweet
+
+<blockquote class="twitter-tweet" lang="en">
+   <p>The distance between Yulin, Shaanxi, China and Attendorn, Germany is 7514km
+   <a href="http://t.co/WGWpCDFhwm">pic.twitter.com/WGWpCDFhwm</a></p>
+   &mdash; Random Distance (@RandomDistance) 
+   <a href="https://twitter.com/RandomDistance/statuses/429433953599356929">February 1, 2014</a>
+</blockquote> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 #### Sample Map
  
 ![Sample Map](https://pbs.twimg.com/media/BfWn58NIQAAcB81.png "Sample Map")
-
