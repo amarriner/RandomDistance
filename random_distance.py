@@ -16,13 +16,13 @@ pwd                         = '/home/amarriner/python/random-distance/'
 google_autocomplete_URL     = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?' + \
                                   'sensor=false&'                                             + \
                                   'types=(cities)&'                                           + \
-                                  'key=' + keys.google_api_key + '&'                               + \
+                                  'key=' + keys.google_api_key + '&'                          + \
                                   'input='
 
 # Gets specific data on a particular city
 google_places_URL           = 'https://maps.googleapis.com/maps/api/place/details/json?'      + \
                                   'sensor=false&'                                             + \
-                                  'key=' + keys.google_api_key + '&'                               + \
+                                  'key=' + keys.google_api_key + '&'                          + \
                                   'reference='
 
 # Builds the map image
