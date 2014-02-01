@@ -8,7 +8,7 @@ formula which I cribbed from [here](http://www.movable-type.co.uk/scripts/latlon
 
 **Dependencies**
  * Google API key and permissions from the [Google API Console](https://code.google.com/apis/console/)
- * Twitter consumer keys and access tokens
+ * [Twitter](https://dev.twitter.com/) consumer keys and access tokens
  * [python-twitter Module](https://github.com/bear/python-twitter)
 
 **TODO**
