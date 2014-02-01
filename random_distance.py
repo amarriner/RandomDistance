@@ -27,12 +27,12 @@ google_places_URL           = 'https://maps.googleapis.com/maps/api/place/detail
 
 # Builds the map image
 google_static_maps_URL      = 'http://maps.googleapis.com/maps/api/staticmap?'                + \
-                              'sensor=false&'                                                 + \
-                              'size=640x480&'                                                 + \
-                              'format=png&'                                                   + \
-                              'markers=color:0x2222dd|label:1|<P1>&'                          + \
-                              'markers=color:0x2222dd|label:2|<P2>&'                          + \
-                              'path=geodesic:true|color:0x0000ff60|weight:4|<P1>|<P2>'
+                                  'sensor=false&'                                             + \
+                                  'size=640x480&'                                             + \
+                                  'format=png&'                                               + \
+                                  'markers=color:0x2222dd|label:1|<P1>&'                      + \
+                                  'markers=color:0x2222dd|label:2|<P2>&'                      + \
+                                  'path=geodesic:true|color:0x0000ff60|weight:4|<P1>|<P2>'
 
 
 # Gets the distance between two latitude/longitude points using the haversine formula
@@ -106,9 +106,10 @@ second_place = place
 distance = get_distance(first_place, second_place)
 
 # Build tweet text
-tweet = 'The distance between ' + first_place['formatted_address']               + \
-        ' and ' + second_place['formatted_address']                              + \
-        ' is ' + locale.format('%d', int(round(distance)), grouping=True) + 'km\n'
+tweet = 'The distance between ' + first_place['formatted_address']                  + \
+        ' and ' + second_place['formatted_address']                                 + \
+        ' is ' + locale.format('%d', int(round(distance)), grouping=True) + 'km \n' + \
+        '#maps #GIS #Earth'
 
 # Debug output
 print('First: ' + first_place['formatted_address'] + ' '    + \
