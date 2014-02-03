@@ -9,6 +9,15 @@ import string
 import twitter
 import urllib
 
+# Number of places to get from Google API
+MAX_PLACES                  = 2
+
+# List to store places
+PLACES                      = []
+
+# Number of times to attempt retrieval of a city from Google API
+MAX_RETRIES                 = 10
+
 # Working directory
 pwd                         = '/home/amarriner/python/random-distance/'
 
@@ -26,14 +35,18 @@ google_places_URL           = 'https://maps.googleapis.com/maps/api/place/detail
                                   'reference='
 
 # Builds the map image
-google_static_maps_URL      = 'http://maps.googleapis.com/maps/api/staticmap?'                + \
-                                  'sensor=false&'                                             + \
-                                  'size=640x480&'                                             + \
-                                  'format=png&'                                               + \
-                                  'markers=color:0x2222dd|label:1|<P1>&'                      + \
-                                  'markers=color:0x2222dd|label:2|<P2>&'                      + \
+google_static_maps_URL      = 'http://maps.googleapis.com/maps/api/staticmap?'                       + \
+                                  'sensor=false&'                                                    + \
+                                  'size=640x480&'                                                    + \
+                                  'format=png&'                                                      + \
+                                  'markers=color:0x2222dd|label:1|<P1>&'                             + \
+                                  'markers=color:0x2222dd|label:2|<P2>&'                             + \
                                   'path=geodesic:true|color:0x0000ff60|weight:4|<P1>|<P2>'
 
+# Builds the name of the place that will be tweeted from place results
+def build_name(place):
+   return place['address_components'][0]['short_name'] + ' ' + \
+          place['address_components'][len(place['address_components']) - 1]['long_name']
 
 # Gets the distance between two latitude/longitude points using the haversine formula
 # Taken from http://www.movable-type.co.uk/scripts/latlong.html
@@ -56,7 +69,7 @@ def get_distance(first_place, second_place):
 
    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
-   return radius * c
+   return int(math.floor(radius * c))
 
 
 # Retrieves random geo information on a place from Google API
@@ -81,56 +94,58 @@ def get_place():
    else:
       return place
 
+# Try to get as many places from Google API as is defined by MAX_PLACES
+def get_places():
+   for i in range(0, MAX_PLACES):    
+      place = None
+      retries = 0
+   
+      # Try to find a random place. Retry only MAX_RETRIES times before quitting
+      while (place == None and retries < MAX_RETRIES):
+         retries += 1
+         print 'Attempting to find a random place (attempt ' + str(retries) + ')...'
+         place = get_place()
 
-place = None
-retries = 0
-# Try to find a random place. Retry only 5 times before quitting
-while (place == None and retries < 5):
-   retries += 1
-   print 'Attempting to find a random place (attempt ' + str(retries) + ')...'
-   place = get_place()
+      if place != None:
+         PLACES.append(place)
 
-first_place = place
 
-place = None
-retries = 0
-# Try to find a second random place. Retry only 5 times before quitting
-while (place == None and retries < 5):
-   retries += 1
-   print 'Attempting to find a random place (attempt ' + str(retries) + ')...'
-   place = get_place()
+# Attempt place retrieval
+get_places()
 
-second_place = place
+# Make sure we've retrieved all the places we want
+if len(PLACES) == MAX_PLACES:
 
-# Get distance in km between two places on the globe
-distance = get_distance(first_place, second_place)
+   # Build tweet text
+   tweet = 'The distance between ' + build_name(PLACES[0])         + \
+           ' and ' + build_name(PLACES[1])                         + \
+           ' is ' + str(get_distance(PLACES[0], PLACES[1])) + 'km' + \
+           ' #Maps #GIS #Earth'
 
-# Build tweet text
-tweet = 'The distance between ' + first_place['formatted_address']                  + \
-        ' and ' + second_place['formatted_address']                                 + \
-        ' is ' + locale.format('%d', int(round(distance)), grouping=True) + 'km \n' + \
-        '#maps #GIS #Earth'
+   # Debug output
+   print('First : ' + build_name(PLACES[0]) + ' '            + \
+         str(PLACES[0]['geometry']['location']['lat']) + ',' + \
+         str(PLACES[0]['geometry']['location']['lng']))
 
-# Debug output
-print('First: ' + first_place['formatted_address'] + ' '    + \
-      str(first_place['geometry']['location']['lat']) + ',' + \
-      str(first_place['geometry']['location']['lat']))
+   print('Second: ' + build_name(PLACES[1]) + ' '            + \
+         str(PLACES[1]['geometry']['location']['lat']) + ',' + \
+         str(PLACES[1]['geometry']['location']['lng']))
 
-print('Second: ' + second_place['formatted_address'] + ' '   + \
-      str(second_place['geometry']['location']['lat']) + ',' + \
-      str(second_place['geometry']['location']['lat']))
+   print(tweet)
+   print('Number of characters: ' + str(len(tweet)))
 
-print(tweet)
+   # Download static image from Google API call
+   urllib.urlretrieve(google_static_maps_URL.replace('<P1>', str(PLACES[0]['geometry']['location']['lat']) + ',' + \
+                                                             str(PLACES[0]['geometry']['location']['lng']))        \
+                                            .replace('<P2>', str(PLACES[1]['geometry']['location']['lat']) + ',' + \
+                                                             str(PLACES[1]['geometry']['location']['lng']))        \
+                                            , pwd + 'downloaded_map.png')
 
-# Download static image from Google API call
-urllib.urlretrieve(google_static_maps_URL.replace('<P1>', str( first_place['geometry']['location']['lat']) + ',' + \
-                                                          str( first_place['geometry']['location']['lng']))        \
-                                         .replace('<P2>', str(second_place['geometry']['location']['lat']) + ',' + \
-                                                          str(second_place['geometry']['location']['lng']))        \
-                                         , pwd + 'downloaded_map.png')
+   # Connect to Twitter
+   api = twitter.Api(keys.consumer_key, keys.consumer_secret, keys.access_token, keys.access_token_secret)
 
-# Connect to Twitter
-api = twitter.Api(keys.consumer_key, keys.consumer_secret, keys.access_token, keys.access_token_secret)
+   # Post tweet text and image
+   status = api.PostMedia(tweet, pwd + 'downloaded_map.png')
 
-# Post tweet text and image
-status = api.PostMedia(tweet, pwd + 'downloaded_map.png')
+else:
+   print "*** Error selecting places from Google! ***"
