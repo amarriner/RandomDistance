@@ -45,8 +45,7 @@ google_static_maps_URL      = 'http://maps.googleapis.com/maps/api/staticmap?'  
 
 # Builds the name of the place that will be tweeted from place results
 def build_name(place):
-   return place['address_components'][0]['short_name'] + ' ' + \
-          place['address_components'][len(place['address_components']) - 1]['long_name']
+   return place['formatted_address']
 
 # Gets the distance between two latitude/longitude points using the haversine formula
 # Taken from http://www.movable-type.co.uk/scripts/latlong.html
