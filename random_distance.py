@@ -25,13 +25,13 @@ pwd                         = '/home/amarriner/python/random-distance/'
 google_autocomplete_URL     = 'https://maps.googleapis.com/maps/api/place/autocomplete/json?' + \
                                   'sensor=false&'                                             + \
                                   'types=(cities)&'                                           + \
-                                  'key=' + keys.google_api_key + '&'                          + \
+                                  'key=' + keys.google_api_key_server + '&'                   + \
                                   'input='
 
 # Gets specific data on a particular city
 google_places_URL           = 'https://maps.googleapis.com/maps/api/place/details/json?'      + \
                                   'sensor=false&'                                             + \
-                                  'key=' + keys.google_api_key + '&'                          + \
+                                  'key=' + keys.google_api_key_server + '&'                   + \
                                   'reference='
 
 # Builds the map image
@@ -41,6 +41,7 @@ google_static_maps_URL      = 'http://maps.googleapis.com/maps/api/staticmap?'  
                                   'format=png&'                                                      + \
                                   'markers=color:0x2222dd|label:1|<P1>&'                             + \
                                   'markers=color:0x2222dd|label:2|<P2>&'                             + \
+                                  'key=' + keys.google_api_key_browser + '&'                         + \
                                   'path=geodesic:true|color:0x0000ff60|weight:4|<P1>|<P2>'
 
 # Builds the name of the place that will be tweeted from place results
